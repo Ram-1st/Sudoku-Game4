@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- MENU -->
+  <section id="menu">
+
+    <header>
+      <button id="language-button">EN/NL</button>
+    </header>
+
+    <h1 id="menu-title">Sudoku</h1>
+
+    <button class="difficulty-button" id="easy-button">Easy</button>
+    <button class="difficulty-button" id="medium-button">Medium</button>
+    <button class="difficulty-button" id="hard-button">Hard</button>
+
+  </section>
+
+
+  <!-- GAME -->
+  <section id="game">
+
+    <h2>Sudoku</h2>
+
+    <table id="sudoku-table">
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td>
+      </tr>
+    </table>
+
+
+    <div id="restart-button">
+      <button id="game-back-button">Back to menu</button>
+      <button id="try-again-button">Try again</button>
+    </div>
+
+
+    <div id="number-buttons">
+
+      <button data-number="1">1</button>
+      <button data-number="2">2</button>
+      <button data-number="3">3</button>
+      <button data-number="4">4</button>
+      <button data-number="5">5</button>
+
+      <button data-number="6">6</button>
+      <button data-number="7">7</button>
+      <button data-number="8">8</button>
+      <button data-number="9">9</button>
+
+      <button id="delete-cell-button">X</button>
+
+    </div>
+
+  </section>
+
+
+  <!-- WELL DONE -->
+  <section id="well-done">
+
+    <div class="illustration-container">
+
+      <div class="mini-grid">
+
+        <div class="cell">5</div>
+        <div class="cell"></div>
+        <div class="cell">3</div>
+
+        <div class="cell">6</div>
+        <div class="cell highlight"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell">9</div>
+        <div class="cell"></div>
+
+      </div>
+
+      <div class="badge">✓</div>
+
+      <span class="ray ray-top-left"></span>
+      <span class="ray ray-bottom-left"></span>
+      <span class="ray ray-top-right"></span>
+      <span class="ray ray-bottom-right"></span>
+
+    </div>
+
+    <h2>Well Done!</h2>
+
+    <p>You solved the Sudoku!</p>
+
+    <p>Great job! Want to play again?</p>
+
+    <button id="play-again-button">Play again</button>
+    <button id="back-menu-button">Back to menu</button>
+
+  </section>
+
+
+  <!-- JAVASCRIPT -->
+  <script src="script.js"></script>
+
+</body>
+</html>
