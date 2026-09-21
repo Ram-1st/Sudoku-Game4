@@ -1,0 +1,478 @@
+/* ==========================================
+   BASE
+   ========================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #f7f8fa;
+  color: #1f2937;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+button {
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+
+/* ==========================================
+   SCREENS
+   ========================================== */
+
+#game,
+#well-done {
+  display: none;
+}
+
+
+/* ==========================================
+   MENU
+   ========================================== */
+
+#menu {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#menu header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#menu h1 {
+  font-size: 42px;
+  margin: 50px 0 40px;
+  cursor: pointer;
+  user-select: none;
+}
+
+
+/* Language */
+
+#language-button {
+  background: transparent;
+  color: #1f2937;
+  border: 1px solid #1f2937;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+#language-button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+
+/* Difficulty */
+
+.difficulty-button {
+  display: block;
+  width: 200px;
+  margin: 12px auto;
+  font-size: 24px;
+}
+
+
+/* ==========================================
+   GAME
+   ========================================== */
+
+#game {
+  max-width: 500px;
+  width: 100%;
+  margin: 30px auto;
+  text-align: center;
+}
+
+#game h2 {
+  font-size: 34px;
+  margin: 0 0 20px;
+}
+
+
+/* ==========================================
+   SUDOKU GRID
+   ========================================== */
+
+#sudoku-table {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  background: white;
+  border: 3px solid #1f2937;
+}
+
+#sudoku-table td {
+  border: 1px solid #9ca3af;
+
+  height: 45px;
+
+  text-align: center;
+  vertical-align: middle;
+
+  font-size: 22px;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: background-color 0.15s ease;
+}
+
+
+/* 3x3 borders */
+
+#sudoku-table tr:nth-child(3) td,
+#sudoku-table tr:nth-child(6) td {
+  border-bottom: 3px solid #1f2937;
+}
+
+#sudoku-table td:nth-child(3),
+#sudoku-table td:nth-child(6) {
+  border-right: 3px solid #1f2937;
+}
+
+
+/* Selected */
+
+#sudoku-table td.selected {
+  background: #2563eb !important;
+  color: white !important;
+}
+
+
+/* Wrong */
+
+#sudoku-table td.wrong {
+  background: #dc2626 !important;
+  color: white !important;
+}
+
+
+/* ==========================================
+   GAME CONTROLS
+   ========================================== */
+
+#restart-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 12px;
+}
+
+#game-back-button {
+  background: transparent;
+  color: #1f2937;
+  border: 1px solid #1f2937;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+#try-again-button {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+
+/* ==========================================
+   NUMBER PAD
+   ========================================== */
+
+#number-buttons {
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
+
+  gap: 8px;
+
+  width: 100%;
+
+  margin-top: 20px;
+}
+
+#number-buttons button {
+  width: 100%;
+  height: 55px;
+
+  padding: 0;
+
+  font-size: 20px;
+}
+
+
+/* X stays under 5 */
+
+#delete-cell-button {
+  grid-column: 5;
+  grid-row: 2;
+
+  background: #dc2626;
+}
+
+#delete-cell-button:hover {
+  background: #b91c1c;
+}
+
+
+/* ==========================================
+   WELL DONE
+   ========================================== */
+
+#well-done {
+  max-width: 500px;
+  margin: 30px auto;
+  text-align: center;
+}
+
+#well-done h2 {
+  font-size: 42px;
+  color: #2563eb;
+  margin-bottom: 20px;
+}
+
+#well-done p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+#well-done p:first-of-type {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#well-done p:last-of-type {
+  color: #6b7280;
+}
+
+
+/* ==========================================
+   WELL DONE BUTTONS
+   ========================================== */
+
+#play-again-button,
+#back-menu-button {
+  display: block;
+
+  width: 220px;
+
+  margin: 10px auto;
+
+  padding: 12px 24px;
+
+  font-size: 16px;
+}
+
+#back-menu-button {
+  background: #6b7280;
+}
+
+
+/* ==========================================
+   ILLUSTRATION
+   ========================================== */
+
+.illustration-container {
+  position: relative;
+
+  width: 160px;
+  height: 140px;
+
+  margin: 0 auto 16px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mini-grid {
+  width: 90px;
+  height: 90px;
+
+  background: white;
+
+  border: 3px solid #1e293b;
+  border-radius: 8px;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+
+  transform: rotate(-8deg);
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.cell {
+  border: 1px solid #cbd5e1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  color: #1e293b;
+}
+
+.cell.highlight {
+  background: #dbeafe;
+}
+
+
+/* Checkmark */
+
+.badge {
+  position: absolute;
+
+  bottom: 12px;
+  right: 20px;
+
+  width: 44px;
+  height: 44px;
+
+  background: #2563eb;
+
+  border: 3px solid white;
+  border-radius: 50%;
+
+  color: white;
+
+  font-size: 24px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Rays */
+
+.ray {
+  position: absolute;
+
+  height: 6px;
+
+  background: #60a5fa;
+
+  border-radius: 4px;
+}
+
+.ray-top-left {
+  width: 20px;
+  top: 20px;
+  left: 10px;
+  transform: rotate(35deg);
+}
+
+.ray-bottom-left {
+  width: 24px;
+  top: 52px;
+  left: 2px;
+  transform: rotate(10deg);
+}
+
+.ray-top-right {
+  width: 20px;
+  top: 18px;
+  right: 18px;
+  transform: rotate(-35deg);
+}
+
+.ray-bottom-right {
+  width: 24px;
+  top: 48px;
+  right: 4px;
+  transform: rotate(-15deg);
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 12px;
+  }
+
+  #menu h1 {
+    font-size: 38px;
+    margin-top: 40px;
+    margin-bottom: 35px;
+  }
+
+  #game {
+    margin-top: 20px;
+  }
+
+  #game h2 {
+    font-size: 30px;
+  }
+
+  #sudoku-table td {
+    height: auto;
+    aspect-ratio: 1 / 1;
+    font-size: 20px;
+  }
+
+  #number-buttons {
+    gap: 6px;
+  }
+
+  #number-buttons button {
+    height: 55px;
+  }
+
+  #game-back-button,
+  #try-again-button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  #well-done h2 {
+    font-size: 38px;
+  }
+
+}
