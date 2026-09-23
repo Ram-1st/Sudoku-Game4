@@ -1,831 +1,411 @@
-// ==========================================
-// DOM ELEMENTS
-// ==========================================
-
+// DOM Elements
 const screens = {
-  menu: document.getElementById("menu"),
-  game: document.getElementById("game"),
-  wellDone: document.getElementById("well-done")
+  menu: document.getElementById('menu'),
+  game: document.getElementById('game'),
+  wellDone: document.getElementById('well-done')
 };
+const illustration = document.querySelector('.illustration-container');
+const sudokuTable = document.getElementById('sudoku-table');
+const cells = sudokuTable.getElementsByTagName('td');
+const numberButtons = document.querySelectorAll('#number-buttons button[data-number]');
+const deleteButton = document.getElementById('delete-cell-button');
+const tryAgainBtn = document.getElementById('try-again-button');
+const gameBackBtn = document.getElementById('game-back-button');
+const playAgainBtn = document.getElementById('play-again-button');
+const backMenuBtn = document.getElementById('back-menu-button');
+const languageBtn = document.getElementById('language-button');
 
-const sudokuTable = document.getElementById("sudoku-table");
-const cells = sudokuTable.querySelectorAll("td");
-
-const languageBtn =
-  document.getElementById("language-button");
-
-const easyButton =
-  document.getElementById("easy-button");
-
-const mediumButton =
-  document.getElementById("medium-button");
-
-const hardButton =
-  document.getElementById("hard-button");
-
-const numberButtons =
-  document.querySelectorAll(
-    "#number-buttons button[data-number]"
-  );
-
-const deleteButton =
-  document.getElementById("delete-cell-button");
-
-const tryAgainBtn =
-  document.getElementById("try-again-button");
-
-const gameBackBtn =
-  document.getElementById("game-back-button");
-
-const playAgainBtn =
-  document.getElementById("play-again-button");
-
-const backMenuBtn =
-  document.getElementById("back-menu-button");
-
-const menuTitle =
-  document.getElementById("menu-title");
-
-
-// ==========================================
-// GAME VARIABLES
-// ==========================================
-
-let currentDifficulty = "easy";
-
+// Game State
+let currentDifficulty = 'easy';
 let solutionGrid = [];
 let initialGrid = [];
 let playerGrid = [];
+let selectedCell = null; 
+let currentLang = 'en';
 
-let selectedRow = null;
-let selectedCol = null;
-
-let currentLang = "en";
-
-
-// ==========================================
-// LANGUAGE
-// ==========================================
-
+// --- 1. LANGUAGE (EN/NL) SYSTEM ---
 const i18n = {
-
   en: {
-    easy: "Easy",
-    medium: "Medium",
-    hard: "Hard",
-
-    tryAgain: "Try again",
-    backMenu: "Back to menu",
-
-    wellDone: "Well Done!",
-    solved: "You solved the Sudoku!",
-    again: "Great job! Want to play again?",
-
-    playAgain: "Play again",
-
-    confirm:
-      "Restart puzzle?\nYour current progress will be lost."
+    appTitle: "Sudoku",
+    btnEasy: "Easy",
+    btnMedium: "Medium",
+    btnHard: "Hard",
+    btnTryAgain: "Try again",
+    btnGameBack: "Back to menu",
+    wellDoneTitle: "Well done!",
+    wellDoneSub1: "You solved the Sudoku!",
+    wellDoneSub2: "Great job! Want to play again?",
+    btnPlayAgain: "Play again",
+    btnBackMenu: "Back to menu",
+    confirmPrompt: "Restart puzzle?\nYour current progress will be lost."
   },
-
   nl: {
-    easy: "Makkelijk",
-    medium: "Gemiddeld",
-    hard: "Moeilijk",
-
-    tryAgain: "Opnieuw",
-    backMenu: "Terug naar menu",
-
-    wellDone: "Goed gedaan!",
-    solved: "Je hebt de Sudoku opgelost!",
-    again: "Goed gedaan! Nog een keer spelen?",
-
-    playAgain: "Nog een keer",
-
-    confirm:
-      "Puzzel opnieuw starten?\nJe huidige voortgang gaat verloren."
+    appTitle: "Sudoku",
+    btnEasy: "Makkelijk",
+    btnMedium: "Gemiddeld",
+    btnHard: "Moeilijk",
+    btnTryAgain: "Opnieuw",
+    btnGameBack: "Terug naar menu",
+    wellDoneTitle: "Goed gedaan!",
+    wellDoneSub1: "Je hebt de Sudoku opgelost!",
+    wellDoneSub2: "Goed werk! Nog een keer spelen?",
+    btnPlayAgain: "Nog een keer",
+    btnBackMenu: "Terug naar menu",
+    confirmPrompt: "Puzzel opnieuw starten?\nJe huidige voortgang gaat verloren."
   }
-
 };
 
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'nl' : 'en';
+  
+  if (currentLang === 'nl') {
+    languageBtn.classList.add('active');
+  } else {
+    languageBtn.classList.remove('active');
+  }
+  
+  updateLanguageUI();
+}
 
 function updateLanguageUI() {
-
   const text = i18n[currentLang];
-
-  easyButton.textContent = text.easy;
-  mediumButton.textContent = text.medium;
-  hardButton.textContent = text.hard;
-
-  tryAgainBtn.textContent = text.tryAgain;
-
-  gameBackBtn.textContent = text.backMenu;
-
-  document.querySelector("#well-done h2")
-    .textContent = text.wellDone;
-
-  const paragraphs =
-    document.querySelectorAll("#well-done p");
-
-  paragraphs[0].textContent = text.solved;
-  paragraphs[1].textContent = text.again;
-
-  playAgainBtn.textContent = text.playAgain;
-
-  backMenuBtn.textContent = text.backMenu;
+  
+  document.querySelector('#menu h1').textContent = text.appTitle;
+  document.querySelector('#game h2').textContent = text.appTitle;
+  
+  document.getElementById('easy-button').textContent = text.btnEasy;
+  document.getElementById('medium-button').textContent = text.btnMedium;
+  document.getElementById('hard-button').textContent = text.btnHard;
+  
+  document.getElementById('try-again-button').textContent = text.btnTryAgain;
+  if (gameBackBtn) gameBackBtn.textContent = text.btnGameBack;
+  
+  document.querySelector('#well-done h2').textContent = text.wellDoneTitle;
+  const wellDoneElements = document.querySelectorAll('#well-done p');
+  if (wellDoneElements.length >= 2) {
+    wellDoneElements[0].textContent = text.wellDoneSub1;
+    wellDoneElements[1].textContent = text.wellDoneSub2;
+  }
+  
+  document.getElementById('play-again-button').textContent = text.btnPlayAgain;
+  document.getElementById('back-menu-button').textContent = text.btnBackMenu;
 }
 
+// --- 2. SUDOKU GENERATOR (real random generation via backtracking) ---
+//
+// Instead of reshuffling one memorized grid, this builds a brand new,
+// randomly-filled valid solution from an empty board every time, then
+// removes numbers one at a time -- but only keeps a removal if the
+// puzzle still has exactly ONE possible solution. That means cells can
+// genuinely have more than one number that doesn't break any Sudoku
+// rule yet, until you narrow it down through logic.
 
-languageBtn.addEventListener("click", function () {
-
-  currentLang =
-    currentLang === "en" ? "nl" : "en";
-
-  languageBtn.classList.toggle(
-    "active",
-    currentLang === "nl"
-  );
-
-  updateLanguageUI();
-
-});
-
-
-// ==========================================
-// CREATE BOARD
-// ==========================================
-
-function createEmptyBoard() {
-
-  return Array.from(
-    { length: 9 },
-    () => Array(9).fill(0)
-  );
-
+function createEmptyGrid() {
+  return Array.from({ length: 9 }, () => Array(9).fill(0));
 }
-
-
-// ==========================================
-// SHUFFLE
-// ==========================================
 
 function shuffle(array) {
-
-  const result = [...array];
-
-  for (
-    let i = result.length - 1;
-    i > 0;
-    i--
-  ) {
-
-    const j =
-      Math.floor(Math.random() * (i + 1));
-
-    [
-      result[i],
-      result[j]
-    ] = [
-      result[j],
-      result[i]
-    ];
-
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-
-  return result;
-
+  return array;
 }
 
-
-// ==========================================
-// CHECK NUMBER
-// ==========================================
-
-function isSafe(board, row, col, number) {
-
-  for (let c = 0; c < 9; c++) {
-
-    if (board[row][c] === number) {
-      return false;
+function findEmptyCell(grid) {
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (grid[r][c] === 0) return [r, c];
     }
+  }
+  return null;
+}
 
+// Fills an empty grid completely with a valid, randomly generated solution.
+function fillGrid(grid) {
+  const empty = findEmptyCell(grid);
+  if (!empty) return true; // no empty cells left = solved
+
+  const [r, c] = empty;
+  const candidates = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+  for (const num of candidates) {
+    if (isValidMove(grid, r, c, num)) {
+      grid[r][c] = num;
+      if (fillGrid(grid)) return true;
+      grid[r][c] = 0; // backtrack: undo and try the next candidate
+    }
+  }
+  return false;
+}
+
+// Counts how many solutions a grid has, stopping early once it reaches `limit`.
+// We only ever need to know "is it 1, or more than 1?", so limit defaults to 2.
+function countSolutions(grid, limit = 2) {
+  let count = 0;
+
+  function solve() {
+    if (count >= limit) return;
+    const empty = findEmptyCell(grid);
+    if (!empty) {
+      count++;
+      return;
+    }
+    const [r, c] = empty;
+    for (let num = 1; num <= 9; num++) {
+      if (count >= limit) return;
+      if (isValidMove(grid, r, c, num)) {
+        grid[r][c] = num;
+        solve();
+        grid[r][c] = 0;
+      }
+    }
   }
 
+  solve();
+  return count;
+}
+
+// Tries to remove `targetRemovals` numbers from a fully solved grid, in random
+// order, one at a time -- only keeping a removal if the puzzle still solves
+// in exactly one way. If it can't safely reach the target, it stops early
+// rather than creating a puzzle with more than one valid solution.
+function removeCells(grid, targetRemovals) {
+  const positions = shuffle(
+    Array.from({ length: 81 }, (_, i) => [Math.floor(i / 9), i % 9])
+  );
+
+  let removed = 0;
+
+  for (const [r, c] of positions) {
+    if (removed >= targetRemovals) break;
+
+    const backup = grid[r][c];
+    grid[r][c] = 0;
+
+    const gridCopy = JSON.parse(JSON.stringify(grid));
+    const solutions = countSolutions(gridCopy, 2);
+
+    if (solutions === 1) {
+      removed++;
+    } else {
+      grid[r][c] = backup; // removing this one breaks uniqueness -- put it back
+    }
+  }
+
+  return grid;
+}
+
+function generatePuzzle(difficulty) {
+  const freshGrid = createEmptyGrid();
+  fillGrid(freshGrid);
+  solutionGrid = JSON.parse(JSON.stringify(freshGrid));
+
+  const cellsToRemove = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 45 : 55;
+  initialGrid = removeCells(JSON.parse(JSON.stringify(freshGrid)), cellsToRemove);
+
+  playerGrid = JSON.parse(JSON.stringify(initialGrid));
+}
+
+// --- 3. GAMEPLAY & LOGIC ---
+function renderBoard() {
+  let cellIndex = 0;
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const td = cells[cellIndex];
+      td.dataset.row = r;
+      td.dataset.col = c;
+      td.className = ''; 
+      
+      const val = playerGrid[r][c];
+      if (val !== 0) {
+        td.textContent = val;
+        if (initialGrid[r][c] !== 0) {
+          td.style.fontWeight = 'bold';
+          td.style.color = '#1f2937'; // Black for original numbers
+        } else {
+          td.style.fontWeight = 'normal';
+          td.style.color = '#1f2937'; // Black for player numbers
+        }
+      } else {
+        td.textContent = '';
+      }
+      cellIndex++;
+    }
+  }
+}
+
+function showScreen(screenName) {
+  screens.menu.style.display = 'none';
+  screens.game.style.display = 'none';
+  screens.wellDone.style.display = 'none';
+  illustration.style.display = 'none'; 
+
+  if (screenName === 'menu') screens.menu.style.display = 'block';
+  if (screenName === 'game') screens.game.style.display = 'block';
+  if (screenName === 'well-done') {
+    screens.wellDone.style.display = 'block';
+    illustration.style.display = 'flex'; 
+  }
+}
+
+function startGame(difficulty) {
+  currentDifficulty = difficulty;
+  generatePuzzle(difficulty);
+  renderBoard();
+  selectedCell = null;
+  showScreen('game');
+}
+
+function handleCellClick(e) {
+  const td = e.target;
+  if (selectedCell) selectedCell.domElement.classList.remove('selected');
+  td.classList.add('selected');
+  selectedCell = { row: parseInt(td.dataset.row), col: parseInt(td.dataset.col), domElement: td };
+}
+
+function isValidMove(grid, r, c, num) {
+  for (let i = 0; i < 9; i++) {
+    if (i !== c && grid[r][i] === num) return false; 
+    if (i !== r && grid[i][c] === num) return false; 
+  }
+  let startRow = Math.floor(r / 3) * 3;
+  let startCol = Math.floor(c / 3) * 3;
+  for (let i = startRow; i < startRow + 3; i++) {
+    for (let j = startCol; j < startCol + 3; j++) {
+      if ((i !== r || j !== c) && grid[i][j] === num) return false; 
+    }
+  }
+  return true;
+}
+
+function checkBoardState() {
+  let isBoardFilled = true;
+  let hasConflicts = false;
 
   for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const td = cells[r * 9 + c];
+      const val = playerGrid[r][c];
 
-    if (board[r][col] === number) {
-      return false;
-    }
-
-  }
-
-
-  const startRow =
-    Math.floor(row / 3) * 3;
-
-  const startCol =
-    Math.floor(col / 3) * 3;
-
-
-  for (
-    let r = startRow;
-    r < startRow + 3;
-    r++
-  ) {
-
-    for (
-      let c = startCol;
-      c < startCol + 3;
-      c++
-    ) {
-
-      if (board[r][c] === number) {
-        return false;
-      }
-
-    }
-
-  }
-
-  return true;
-
-}
-
-
-// ==========================================
-// GENERATE SOLUTION
-// ==========================================
-
-function fillBoard(board) {
-
-  for (let row = 0; row < 9; row++) {
-
-    for (let col = 0; col < 9; col++) {
-
-      if (board[row][col] !== 0) {
+      if (val === 0) {
+        isBoardFilled = false;
+        td.classList.remove('wrong');
         continue;
       }
 
+      if (initialGrid[r][c] !== 0) continue; 
 
-      const numbers = shuffle([
-        1, 2, 3,
-        4, 5, 6,
-        7, 8, 9
-      ]);
-
-
-      for (const number of numbers) {
-
-        if (
-          isSafe(
-            board,
-            row,
-            col,
-            number
-          )
-        ) {
-
-          board[row][col] = number;
-
-
-          if (fillBoard(board)) {
-            return true;
-          }
-
-
-          board[row][col] = 0;
-
-        }
-
-      }
-
-      return false;
-
-    }
-
-  }
-
-  return true;
-
-}
-
-
-// ==========================================
-// GENERATE PUZZLE
-// ==========================================
-
-function generatePuzzle(difficulty) {
-
-  solutionGrid =
-    createEmptyBoard();
-
-  fillBoard(solutionGrid);
-
-
-  initialGrid =
-    solutionGrid.map(row => [...row]);
-
-
-  const clues = {
-
-    easy: 42,
-    medium: 34,
-    hard: 28
-
-  };
-
-
-  const cellsToRemove =
-    81 - clues[difficulty];
-
-
-  const positions =
-    shuffle(
-      Array.from(
-        { length: 81 },
-        (_, index) => index
-      )
-    );
-
-
-  for (
-    let i = 0;
-    i < cellsToRemove;
-    i++
-  ) {
-
-    const position =
-      positions[i];
-
-    const row =
-      Math.floor(position / 9);
-
-    const col =
-      position % 9;
-
-    initialGrid[row][col] = 0;
-
-  }
-
-
-  playerGrid =
-    initialGrid.map(row => [...row]);
-
-}
-
-
-// ==========================================
-// DRAW BOARD
-// ==========================================
-
-function renderBoard() {
-
-  cells.forEach((cell, index) => {
-
-    const row =
-      Math.floor(index / 9);
-
-    const col =
-      index % 9;
-
-
-    cell.dataset.row = row;
-    cell.dataset.col = col;
-
-
-    cell.classList.remove(
-      "selected",
-      "wrong"
-    );
-
-
-    const value =
-      playerGrid[row][col];
-
-
-    if (value !== 0) {
-
-      cell.textContent = value;
-
-      if (initialGrid[row][col] !== 0) {
-        cell.style.fontWeight = "bold";
+      if (!isValidMove(playerGrid, r, c, val)) {
+        td.classList.add('wrong');
+        hasConflicts = true;
       } else {
-        cell.style.fontWeight = "normal";
+        td.classList.remove('wrong');
       }
-
-    } else {
-
-      cell.textContent = "";
-      cell.style.fontWeight = "normal";
-
     }
+  }
 
-
-    if (
-      row === selectedRow &&
-      col === selectedCol
-    ) {
-
-      cell.classList.add("selected");
-
+  if (isBoardFilled && !hasConflicts) {
+    let won = true;
+    for(let r=0; r<9; r++){
+      for(let c=0; c<9; c++){
+        if(playerGrid[r][c] !== solutionGrid[r][c]) won = false;
+      }
     }
+    if (won) setTimeout(() => showScreen('well-done'), 300);
+  }
+}
 
+function handleNumberInput(num) {
+  if (!selectedCell) return; 
+  const { row, col, domElement } = selectedCell;
+  if (initialGrid[row][col] !== 0) return; 
+
+  playerGrid[row][col] = num;
+  domElement.textContent = num;
+  domElement.style.color = '#1f2937'; // Black text when typed
+  
+  checkBoardState();
+
+  // If this number breaks a Sudoku rule, show it as wrong briefly,
+  // then automatically clear it after a short delay.
+  if (!isValidMove(playerGrid, row, col, num)) {
+    setTimeout(() => {
+      // Only clear if the cell still holds this same wrong number --
+      // the player may have already changed or deleted it themselves.
+      if (playerGrid[row][col] === num) {
+        playerGrid[row][col] = 0;
+        domElement.textContent = '';
+        domElement.classList.remove('wrong');
+        checkBoardState();
+      }
+    }, 1000);
+  }
+}
+
+function handleDelete() {
+  if (!selectedCell) return;
+  const { row, col, domElement } = selectedCell;
+  if (initialGrid[row][col] !== 0) return;
+
+  playerGrid[row][col] = 0;
+  domElement.textContent = '';
+  checkBoardState();
+}
+
+// --- 4. EVENT LISTENERS ---
+languageBtn.addEventListener('click', toggleLanguage);
+document.getElementById('easy-button').addEventListener('click', () => startGame('easy'));
+document.getElementById('medium-button').addEventListener('click', () => startGame('medium'));
+document.getElementById('hard-button').addEventListener('click', () => startGame('hard'));
+
+for (let td of cells) td.addEventListener('click', handleCellClick);
+
+numberButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => handleNumberInput(parseInt(e.target.dataset.number)));
+});
+
+deleteButton.addEventListener('click', handleDelete);
+
+tryAgainBtn.addEventListener('click', () => {
+  if (window.confirm(i18n[currentLang].confirmPrompt)) {
+    startGame(currentDifficulty); 
+  }
+});
+
+if (gameBackBtn) {
+  gameBackBtn.addEventListener('click', () => {
+    if (window.confirm(i18n[currentLang].confirmPrompt)) {
+      showScreen('menu');
+    }
   });
-
 }
 
+playAgainBtn.addEventListener('click', () => startGame(currentDifficulty));
+backMenuBtn.addEventListener('click', () => showScreen('menu'));
 
-// ==========================================
-// SCREEN CONTROL
-// ==========================================
+// Secret Developer Trigger: Tap "Sudoku" 5 times on either screen
+let tapCount = 0;
+let tapResetTimer = null;
 
-function showScreen(screenName) {
+const headersToTap = document.querySelectorAll('#menu h1, #game h2');
 
-  screens.menu.style.display = "none";
-  screens.game.style.display = "none";
-  screens.wellDone.style.display = "none";
+headersToTap.forEach(header => {
+  header.style.cursor = 'pointer'; 
+  
+  header.addEventListener('click', () => {
+    tapCount++;
+    clearTimeout(tapResetTimer);
 
-
-  if (screenName === "menu") {
-    screens.menu.style.display = "block";
-  }
-
-
-  if (screenName === "game") {
-    screens.game.style.display = "block";
-  }
-
-
-  if (screenName === "well-done") {
-    screens.wellDone.style.display = "block";
-  }
-
-}
-
-
-// ==========================================
-// START GAME
-// ==========================================
-
-function startGame(difficulty) {
-
-  currentDifficulty = difficulty;
-
-  generatePuzzle(difficulty);
-
-  selectedRow = null;
-  selectedCol = null;
-
-  renderBoard();
-
-  showScreen("game");
-
-}
-
-
-// ==========================================
-// SELECT CELL
-// ==========================================
-
-cells.forEach(cell => {
-
-  cell.addEventListener(
-    "click",
-    function () {
-
-      selectedRow =
-        Number(cell.dataset.row);
-
-      selectedCol =
-        Number(cell.dataset.col);
-
-      renderBoard();
-
+    if (tapCount >= 5) {
+      showScreen('well-done');
+      tapCount = 0;
     }
-  );
 
+    tapResetTimer = setTimeout(() => { tapCount = 0; }, 1500);
+  });
 });
 
-
-// ==========================================
-// ENTER NUMBER
-// ==========================================
-
-function handleNumberInput(number) {
-
-  if (
-    selectedRow === null ||
-    selectedCol === null
-  ) {
-    return;
-  }
-
-
-  if (
-    initialGrid[selectedRow][selectedCol] !== 0
-  ) {
-    return;
-  }
-
-
-  const row = selectedRow;
-  const col = selectedCol;
-
-  const cell =
-    cells[row * 9 + col];
-
-
-  // CORRECT
-  if (
-    number === solutionGrid[row][col]
-  ) {
-
-    playerGrid[row][col] = number;
-
-    renderBoard();
-
-    checkComplete();
-
-    return;
-
-  }
-
-
-  // WRONG
-  cell.textContent = number;
-
-  cell.classList.remove("selected");
-  cell.classList.add("wrong");
-
-
-  setTimeout(function () {
-
-    if (
-      playerGrid[row][col] === 0
-    ) {
-      cell.textContent = "";
-    }
-
-
-    cell.classList.remove("wrong");
-
-
-    if (
-      selectedRow === row &&
-      selectedCol === col
-    ) {
-
-      cell.classList.add("selected");
-
-    }
-
-  }, 600);
-
-}
-
-
-// Number buttons
-
-numberButtons.forEach(button => {
-
-  button.addEventListener(
-    "click",
-    function () {
-
-      const number =
-        Number(button.dataset.number);
-
-      handleNumberInput(number);
-
-    }
-  );
-
-});
-
-
-// ==========================================
-// DELETE
-// ==========================================
-
-deleteButton.addEventListener(
-  "click",
-  function () {
-
-    if (
-      selectedRow === null ||
-      selectedCol === null
-    ) {
-      return;
-    }
-
-
-    if (
-      initialGrid[selectedRow][selectedCol] !== 0
-    ) {
-      return;
-    }
-
-
-    playerGrid[selectedRow][selectedCol] = 0;
-
-    renderBoard();
-
-  }
-);
-
-
-// ==========================================
-// CHECK COMPLETE
-// ==========================================
-
-function checkComplete() {
-
-  for (let row = 0; row < 9; row++) {
-
-    for (let col = 0; col < 9; col++) {
-
-      if (
-        playerGrid[row][col] !==
-        solutionGrid[row][col]
-      ) {
-
-        return;
-
-      }
-
-    }
-
-  }
-
-
-  setTimeout(function () {
-
-    selectedRow = null;
-    selectedCol = null;
-
-    showScreen("well-done");
-
-  }, 300);
-
-}
-
-
-// ==========================================
-// TRY AGAIN
-// ==========================================
-
-tryAgainBtn.addEventListener(
-  "click",
-  function () {
-
-    if (
-      window.confirm(
-        i18n[currentLang].confirm
-      )
-    ) {
-
-      startGame(currentDifficulty);
-
-    }
-
-  }
-);
-
-
-// ==========================================
-// BACK TO MENU
-// ==========================================
-
-gameBackBtn.addEventListener(
-  "click",
-  function () {
-
-    if (
-      window.confirm(
-        i18n[currentLang].confirm
-      )
-    ) {
-
-      selectedRow = null;
-      selectedCol = null;
-
-      showScreen("menu");
-
-    }
-
-  }
-);
-
-
-// ==========================================
-// PLAY AGAIN
-// ==========================================
-
-playAgainBtn.addEventListener(
-  "click",
-  function () {
-
-    startGame(currentDifficulty);
-
-  }
-);
-
-
-// ==========================================
-// WELL DONE → MENU
-// ==========================================
-
-backMenuBtn.addEventListener(
-  "click",
-  function () {
-
-    selectedRow = null;
-    selectedCol = null;
-
-    showScreen("menu");
-
-  }
-);
-
-
-// ==========================================
-// DIFFICULTY
-// ==========================================
-
-easyButton.addEventListener(
-  "click",
-  function () {
-
-    startGame("easy");
-
-  }
-);
-
-
-mediumButton.addEventListener(
-  "click",
-  function () {
-
-    startGame("medium");
-
-  }
-);
-
-
-hardButton.addEventListener(
-  "click",
-  function () {
-
-    startGame("hard");
-
-  }
-);
-
-
-// ==========================================
-// SUDOKU TITLE SECRET SHORTCUT
-// 5 CLICKS → WELL DONE
-// ==========================================
-
-let titleClicks = 0;
-let titleTimer;
-
-
-menuTitle.addEventListener(
-  "click",
-  function () {
-
-    titleClicks++;
-
-    clearTimeout(titleTimer);
-
-
-    titleTimer = setTimeout(
-      function () {
-
-        titleClicks = 0;
-
-      },
-      1000
-    );
-
-
-    if (titleClicks === 5) {
-
-      titleClicks = 0;
-
-      showScreen("well-done");
-
-    }
-
-  }
-);
-
-
-// ==========================================
-// START
-// ==========================================
-
+// --- INITIALIZE ---
 updateLanguageUI();
-
-showScreen("menu");
+showScreen('menu');
